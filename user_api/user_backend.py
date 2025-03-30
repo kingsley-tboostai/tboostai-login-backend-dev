@@ -50,7 +50,7 @@ app.add_middleware(
 )
 
 # Initialize Gmail service
-gmail_service = GmailService(sender_email="your-email@gmail.com")  # 替换为实际的发件人邮箱
+gmail_service = GmailService(sender_email=os.getenv('GMAIL_SENDER_EMAIL', 'info@tboostai.com'))  # 从环境变量读取发件人邮箱
 
 # 加载环境变量
 load_dotenv()
@@ -94,7 +94,7 @@ async def verify_email_code(
         data = decrypt_data(encrypted_data)
         email = data["email"]
         code = data["code"]
-        
+        print(f"Received email: {email}, code: {code}") 
         verification = db.exec(
             select(VerificationCode)
             .where(
@@ -102,36 +102,65 @@ async def verify_email_code(
                 VerificationCode.code == code
             )
             .order_by(VerificationCode.created_at.desc())
-        ).first()
+        ).scalars().first()
 
+        print(f"Verification: {verification}")
+        
         if not verification:
             latest = db.exec(
                 select(VerificationCode)
                 .where(VerificationCode.email == email)
                 .order_by(VerificationCode.created_at.desc())
-            ).first()
+            ).scalars().first()
             
             if not latest:
                 raise HTTPException(400, "No verification code found")
-            elif latest.is_used:
+            elif getattr(latest, "is_used", False):
                 raise HTTPException(400, "Code has already been used")
+            elif latest.expires_at is None:
+                raise HTTPException(400, "Invalid expiration date")
             elif latest.expires_at <= datetime.utcnow():
                 raise HTTPException(400, "Code has expired")
             else:
                 raise HTTPException(400, "Invalid code")
-
-        if verification.is_used:
-            raise HTTPException(400, "Code has already been used")
-        if verification.expires_at <= datetime.utcnow():
+        
+        # 刷新 verification 对象，确保 expires_at 已经加载
+        db.refresh(verification)
+        expires_at = getattr(verification, "expires_at", None)
+        print(f"Type of expires_at: {type(expires_at)}; value: {expires_at}")
+        
+        if expires_at is None:
+            raise HTTPException(400, "Invalid expiration date")
+        if expires_at <= datetime.utcnow():
             raise HTTPException(400, "Code has expired")
+        if getattr(verification, "is_used", False):
+            raise HTTPException(400, "Code has already been used")
         
         verification.is_used = True
         db.commit()
         
-        return {"status": "success", "email": email}
+        # 创建或获取用户
+        user = await get_user_by_email(db, email)
+        if not user:
+            user = await create_user(
+                db=db,
+                email=email,
+                is_email_verified=True
+            )
+        else:
+            user.is_email_verified = True
+            db.commit()
+            db.refresh(user)
+        
+        return {
+            "status": "success", 
+            "email": email,
+            "user": user
+        }
     except Exception as e:
         logger.error(f"Error in verify_email_code: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/user/email/create")
 async def create_email_user(
@@ -179,17 +208,15 @@ async def complete_profile(
     print("=== Complete Profile Endpoint ===")
     print(f"Received request: {profile_data}")  # 添加日志
     print(f"User ID from token: {user_id}")
-    # print(f"User ID from token: {user_id}")  # 添加日志
     try:
-        user = await get_user_by_email(db, profile_data.email)
+        # 使用 scalars().first() 获取用户对象
+        user = db.exec(select(UserAccount).where(UserAccount.id == user_id)).scalars().first()
         if not user:
             raise HTTPException(404, "User not found")
         
-        # 验证 token 中的用户 ID 与请求的用户匹配
-        if str(user.id) != user_id:
-            raise HTTPException(403, "Unauthorized access")
-        
         user.full_name = profile_data.full_name
+        if profile_data.phone_number:
+            user.phone_number = profile_data.phone_number
         db.commit()
         db.refresh(user)
         
@@ -200,11 +227,11 @@ async def complete_profile(
             }
         }
     except Exception as e:
-            print(f"Error in complete_profile: {str(e)}")
-            raise HTTPException(
-                status_code=500,
-                detail=str(e)
-            )
+        print(f"Error in complete_profile: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
 @app.get("/user/profile") #user backend +auth
 @require_auth
