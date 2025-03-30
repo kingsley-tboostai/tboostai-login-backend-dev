@@ -17,18 +17,18 @@ ALLOWED_ORIGINS = [
 AUTH_BACKEND_URL = os.getenv("AUTH_BACKEND_URL", "http://localhost:8004")
 USER_BACKEND_URL = os.getenv("USER_BACKEND_URL", "http://localhost:8003")
 CHAT_BACKEND_URL = os.getenv("CHAT_BACKEND_URL", "http://localhost:8001")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3002")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://car-quest.tboostai.com")
 
 # Google OAuth 配置
-GOOGLE_CLIENT_ID = "771384916731-rlvt5800trutb500j7dvphtp9pp5qa65.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET = "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"
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_AUTH_URI = "https://accounts.google.com/o/oauth2/auth"
 GOOGLE_TOKEN_URI = "https://oauth2.googleapis.com/token"
 GOOGLE_AUTH_PROVIDER_CERT_URL = "https://www.googleapis.com/oauth2/v1/certs"
 GOOGLE_REDIRECT_URIS = [f"{AUTH_BACKEND_URL}/auth/google/callback"]
 
 # JWT 配置
-JWT_SECRET = os.getenv("JWT_SECRET", "your_jwt_secret")
+JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 # 密钥路径配置
@@ -44,11 +44,11 @@ PRIVATE_KEY_PEM = str(BASE_DIR / "keys" / "private.pem")
 # DB_CHAT_NAME = "tboostai_chat_db"
 
 # 本地数据库配置
-DB_USERNAME = "root"
-DB_PASSWORD = "123456password"
-DB_HOST = "localhost:3306"
-DB_NAME = "com_tboostAI_core"
-DB_CHAT_NAME = "com_tboostAI_core"
+DB_USERNAME = os.getenv("DB_USERNAME")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_HOST = os.getenv("DB_HOST")
+DB_NAME = os.getenv("DB_NAME")
+DB_CHAT_NAME = os.getenv("DB_CHAT_NAME")
 
 # 数据库连接 URL
 SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"

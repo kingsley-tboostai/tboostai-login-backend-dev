@@ -207,10 +207,7 @@ async def google_auth_callback(code: str, state: Optional[str] = None):
         
         # 重定向回前端
         print("DEBUG - FRONTEND_URL is:", config.FRONTEND_URL)
-        # redirect_url = f"{config.FRONTEND_URL}?token={token}&user={json.dumps(user_data['user'])}&session_id={session_id if session_id else ''}&ts={int(time.time())}"
-        redirect_url = f"https://car-quest.tboostai.com?token={token}&user={json.dumps(user_data['user'])}&session_id={session_id if session_id else ''}&ts={int(time.time())}"
-        # redirect_url = f"http://localhost:3000?token={token}&user={json.dumps(user_data['user'])}&session_id={session_id if session_id else ''}&ts={int(time.time())}"
-
+        redirect_url = f"{config.FRONTEND_URL}?token={token}&user={json.dumps(user_data['user'])}&session_id={session_id if session_id else ''}&ts={int(time.time())}"
         print(f"Redirecting to: {redirect_url}")  
         return RedirectResponse(
             url=redirect_url,
