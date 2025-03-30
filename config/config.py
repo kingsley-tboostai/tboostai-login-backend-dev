@@ -10,6 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 服务地址与跨域配置
 ALLOWED_ORIGINS = [
+    "https://tboostai-login-frontend-dev.vercel.app",
     "http://localhost:3002",
     "http://127.0.0.1:3002"
 ]
