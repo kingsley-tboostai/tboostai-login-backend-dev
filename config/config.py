@@ -21,6 +21,9 @@ ALLOWED_ORIGINS = [
 # 确保没有重复的域名
 ALLOWED_ORIGINS = list(set(ALLOWED_ORIGINS))  # 去重
 
+# 打印允许的域名列表，用于调试
+print("Allowed origins:", ALLOWED_ORIGINS)
+
 AUTH_BACKEND_URL = os.getenv("AUTH_BACKEND_URL", "https://auth.99rent.net")
 USER_BACKEND_URL = os.getenv("USER_BACKEND_URL", "https://user.99rent.net")
 CHAT_BACKEND_URL = os.getenv("CHAT_BACKEND_URL", "https://chat.99rent.net")

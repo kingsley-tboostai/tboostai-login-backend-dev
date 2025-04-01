@@ -43,31 +43,28 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# 添加自定义中间件来处理 CORS
 @app.middleware("http")
 async def cors_middleware(request: Request, call_next):
-    # 获取请求的 origin
     origin = request.headers.get("origin")
+    print(f"Received request from origin: {origin}")
+    print(f"Allowed origins: {config.ALLOWED_ORIGINS}")
     
-    # 如果是预检请求，直接返回响应
     if request.method == "OPTIONS":
-        response = Response()
-        response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
-        response.headers["Access-Control-Allow-Headers"] = "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
-        response.headers["Access-Control-Expose-Headers"] = "Content-Length,Content-Range"
-        response.headers["Access-Control-Max-Age"] = "86400"  # 24 hours
+        print("Handling OPTIONS request")
+        response = Response(status_code=204)
+        if origin in config.ALLOWED_ORIGINS:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
+            response.headers["Access-Control-Allow-Headers"] = "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+            response.headers["Access-Control-Max-Age"] = "86400"
         return response
     
-    # 处理实际请求
     response = await call_next(request)
-    
-    # 如果请求来源在允许列表中，添加 CORS 头部
     if origin in config.ALLOWED_ORIGINS:
+        print(f"Adding CORS headers for origin: {origin}")
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
         response.headers["Access-Control-Allow-Headers"] = "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
-        response.headers["Access-Control-Expose-Headers"] = "Content-Length,Content-Range"
     
     return response
 
