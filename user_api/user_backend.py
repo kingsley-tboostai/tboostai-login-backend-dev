@@ -219,13 +219,16 @@ async def complete_profile(
     print("=== Complete Profile Endpoint ===")
     print(f"Received request: {profile_data}")  # 添加日志
     print(f"User ID from token: {user_id}")
+    print(f"Request headers: {request.headers}")  # 添加请求头日志
     try:
         # 使用 scalars().first() 获取用户对象
         user = db.exec(select(UserAccount).where(UserAccount.id == user_id)).scalars().first()
         print(f"[CompleteProfile] Query result for user_id {user_id}: {user}")
         if not user:
+            print(f"[CompleteProfile] User not found with ID: {user_id}")
             raise HTTPException(404, "User not found")
         
+        print(f"[CompleteProfile] Updating user with full_name: {profile_data.full_name}")
         user.full_name = profile_data.full_name
         db.commit()
         db.refresh(user)
@@ -239,6 +242,8 @@ async def complete_profile(
         }
     except Exception as e:
         print(f"Error in complete_profile: {str(e)}")
+        print(f"Error type: {type(e)}")
+        print(f"Error traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=500,
             detail=str(e)
