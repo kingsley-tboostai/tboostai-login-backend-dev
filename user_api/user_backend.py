@@ -216,8 +216,6 @@ async def complete_profile(
             raise HTTPException(404, "User not found")
         
         user.full_name = profile_data.full_name
-        if profile_data.phone_number:
-            user.phone_number = profile_data.phone_number
         db.commit()
         db.refresh(user)
         

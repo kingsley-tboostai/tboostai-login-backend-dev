@@ -136,6 +136,7 @@ class EmailCodeVerificationRequest(BaseModel):
     code: str
 
 class CompleteProfileRequest(BaseModel):
+    email: str
     full_name: str
     phone_number: Optional[str] = None
 
