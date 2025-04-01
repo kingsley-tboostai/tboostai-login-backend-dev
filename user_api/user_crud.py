@@ -18,14 +18,17 @@ DEFAULT_AVATAR_URL = ""
 
 async def get_user_by_email(db: Session, email: str) -> Optional[UserAccount]:
     try:
-        logger.info(f"Attempting to get user by email: {email}")
+        print(f"=== Getting user by email: {email} ===")
         result = db.exec(select(UserAccount).where(UserAccount.email == email)).first()
+        print(f"Query result: {result}")
         if result:
-            logger.info(f"Found user with email: {email}")
+            print(f"Found user with email: {email}")
+            print(f"User details: {result}")
         else:
-            logger.info(f"No user found with email: {email}")
+            print(f"No user found with email: {email}")
         return result
     except Exception as e:
+        print(f"Error in get_user_by_email: {str(e)}")
         logger.error(f"Error in get_user_by_email: {str(e)}")
         logger.error(f"Error type: {type(e)}")
         logger.error(f"Error traceback: {traceback.format_exc()}")

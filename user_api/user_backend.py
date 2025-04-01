@@ -171,23 +171,30 @@ async def create_email_user(
     db: Session = Depends(get_session)
 ):
     try:
+        print("=== Create Email User ===")
         data = decrypt_data(encrypted_data)
         email = data["email"]
+        print(f"Decrypted email: {email}")
         
         user = await get_user_by_email(db, email)
+        print(f"Existing user: {user}")
         needs_profile = False
 
         if not user:
+            print("Creating new user...")
             # Create new user
             user = await create_user(
                 db=db,
                 email=email
             )
             needs_profile = True
+            print(f"Created new user: {user}")
         elif not user.full_name:
+            print("User exists but needs profile...")
             # Existing user but no profile
             needs_profile = True
         
+        print(f"Returning response with needsProfile: {needs_profile}")
         return {
             "status": "success",
             "data": {
@@ -196,6 +203,7 @@ async def create_email_user(
             }
         }
     except Exception as e:
+        print(f"Error in create_email_user: {str(e)}")
         logger.error(f"Error in create_email_user: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
