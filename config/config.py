@@ -17,8 +17,8 @@ ALLOWED_ORIGINS = [
 ALLOWED_ORIGINS = list(set(ALLOWED_ORIGINS))  # 去重
 
 AUTH_BACKEND_URL = os.getenv("AUTH_BACKEND_URL", "https://auth.99rent.net")
-USER_BACKEND_URL = os.getenv("USER_BACKEND_URL", "http://localhost:8003")
-CHAT_BACKEND_URL = os.getenv("CHAT_BACKEND_URL", "http://localhost:8001")
+USER_BACKEND_URL = os.getenv("USER_BACKEND_URL", "https://user.99rent.net")
+CHAT_BACKEND_URL = os.getenv("CHAT_BACKEND_URL", "https://chat.99rent.net")
 FRONTEND_URL = os.getenv("FRONTEND_URL", "https://tboostai-login-frontend-dev.vercel.app")
 
 # Google OAuth 配置
@@ -27,7 +27,10 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_AUTH_URI = "https://accounts.google.com/o/oauth2/auth"
 GOOGLE_TOKEN_URI = "https://oauth2.googleapis.com/token"
 GOOGLE_AUTH_PROVIDER_CERT_URL = "https://www.googleapis.com/oauth2/v1/certs"
-GOOGLE_REDIRECT_URIS = [f"{AUTH_BACKEND_URL}/auth/google/callback"]
+GOOGLE_REDIRECT_URIS = [
+    f"{AUTH_BACKEND_URL}/auth/google/callback",
+    "https://auth.99rent.net/auth/google/callback"
+]
 
 # JWT 配置
 JWT_SECRET = os.getenv("JWT_SECRET")

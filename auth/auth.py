@@ -63,7 +63,9 @@ def create_flow():
             "client_secret": config.GOOGLE_CLIENT_SECRET,
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
-            "redirect_uris": [f"{config.AUTH_BACKEND_URL}/auth/google/callback"],
+            "redirect_uris": [
+                "https://auth.99rent.net/auth/google/callback"
+            ],
         }
     }
     return Flow.from_client_config(
@@ -74,7 +76,7 @@ def create_flow():
             'https://www.googleapis.com/auth/gmail.send',
             'openid'
         ],
-        redirect_uri=f"{config.AUTH_BACKEND_URL}/auth/google/callback"
+        redirect_uri="https://auth.99rent.net/auth/google/callback"
     )
 
 def create_jwt_token(data: dict) -> str:
