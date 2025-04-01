@@ -13,13 +13,13 @@ if __name__ == "__main__":
         
         if service == "auth":
             port = port or 8004
-            uvicorn.run("auth.auth:app", host="0.0.0.0", port=port, reload=True)
+            uvicorn.run("auth.auth:app", host="0.0.0.0", port=port)
         elif service == "user":
             port = port or 8003
-            uvicorn.run("user_api.user_backend:app", host="0.0.0.0", port=port, reload=True)
+            uvicorn.run("user_api.user_backend:app", host="0.0.0.0", port=port)
         elif service == "chat":
             port = port or 8001
-            uvicorn.run("agent_chat.chat_backend:app", host="0.0.0.0", port=port, reload=True)
+            uvicorn.run("agent_chat.chat_backend:app", host="0.0.0.0", port=port)
         else:
             print("Invalid service. Use: auth, user, or chat")
     else:
