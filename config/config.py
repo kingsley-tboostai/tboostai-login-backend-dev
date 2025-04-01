@@ -10,19 +10,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 服务地址与跨域配置
 ALLOWED_ORIGINS = [
-    "https://tboostai-login-frontend-dev.vercel.app",
-    "http://localhost:3002",
-    "http://127.0.0.1:3002",
-    "https://car-quest.tboostai.com"
+    "https://tboostai-login-frontend-dev.vercel.app"
 ]
 
 # 确保没有重复的域名
 ALLOWED_ORIGINS = list(set(ALLOWED_ORIGINS))  # 去重
 
-AUTH_BACKEND_URL = os.getenv("AUTH_BACKEND_URL", "http://localhost:8004")
+AUTH_BACKEND_URL = os.getenv("AUTH_BACKEND_URL", "https://auth.99rent.net")
 USER_BACKEND_URL = os.getenv("USER_BACKEND_URL", "http://localhost:8003")
 CHAT_BACKEND_URL = os.getenv("CHAT_BACKEND_URL", "http://localhost:8001")
-FRONTEND_URL = os.getenv("FRONTEND_URL", "https://car-quest.tboostai.com")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://tboostai-login-frontend-dev.vercel.app")
 
 # Google OAuth 配置
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")

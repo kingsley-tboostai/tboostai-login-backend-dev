@@ -42,15 +42,18 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=config.ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"],
-    max_age=600,
-)
+
+# 添加自定义中间件来处理 CORS
+@app.middleware("http")
+async def cors_middleware(request: Request, call_next):
+    response = await call_next(request)
+    # 让 Nginx 处理 Vercel 域名的 CORS
+    if request.headers.get("origin") != "https://tboostai-login-frontend-dev.vercel.app":
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+        response.headers["Access-Control-Expose-Headers"] = "Content-Length,Content-Range"
+    return response
 
 def create_flow():
     """创建新的 OAuth flow"""
