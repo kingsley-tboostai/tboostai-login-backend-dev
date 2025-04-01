@@ -10,7 +10,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 服务地址与跨域配置
 ALLOWED_ORIGINS = [
-    "https://tboostai-login-frontend-dev.vercel.app"
+    "https://tboostai-login-frontend-dev.vercel.app",
+    "http://localhost:3000",  # 本地开发环境
+    "http://localhost:3002",
+    "https://auth.99rent.net",
+    "https://user.99rent.net",
+    "https://chat.99rent.net"
 ]
 
 # 确保没有重复的域名

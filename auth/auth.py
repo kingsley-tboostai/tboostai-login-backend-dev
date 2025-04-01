@@ -2,7 +2,7 @@ import os
 import json
 import sys
 import requests
-from fastapi import FastAPI, HTTPException, Request, Query
+from fastapi import FastAPI, HTTPException, Request, Query, Response
 from typing import Optional, Callable
 from pathlib import Path
 import logging
@@ -46,18 +46,23 @@ app = FastAPI()
 # 添加自定义中间件来处理 CORS
 @app.middleware("http")
 async def cors_middleware(request: Request, call_next):
-    response = await call_next(request)
+    # 获取请求的 origin
     origin = request.headers.get("origin")
     
-    # 如果是预检请求，直接返回
+    # 如果是预检请求，直接返回响应
     if request.method == "OPTIONS":
+        response = Response()
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
         response.headers["Access-Control-Allow-Headers"] = "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
         response.headers["Access-Control-Expose-Headers"] = "Content-Length,Content-Range"
+        response.headers["Access-Control-Max-Age"] = "86400"  # 24 hours
         return response
     
-    # 对于所有其他请求
+    # 处理实际请求
+    response = await call_next(request)
+    
+    # 如果请求来源在允许列表中，添加 CORS 头部
     if origin in config.ALLOWED_ORIGINS:
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
