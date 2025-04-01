@@ -82,8 +82,9 @@ def encrypt_data(data: dict) -> str:
 def decrypt_data(encrypted_hex: str) -> dict:
     """使用 RSA 私钥解密数据"""
     try:
+        print(f"Starting decryption of data with length: {len(encrypted_hex)}")
         encrypted_bytes = bytes.fromhex(encrypted_hex)
-        logger.debug(f"Data to decrypt (hex): {encrypted_hex[:100]}...")
+        print(f"Converted to bytes, length: {len(encrypted_bytes)}")
         
         decrypted = PRIVATE_KEY.decrypt(
             encrypted_bytes,
@@ -93,8 +94,16 @@ def decrypt_data(encrypted_hex: str) -> dict:
                 label=None
             )
         )
-        return json.loads(decrypted.decode())
+        print(f"Decrypted bytes length: {len(decrypted)}")
+        
+        decoded = decrypted.decode()
+        print(f"Decoded string: {decoded[:100]}...")  # 只打印前100个字符
+        
+        result = json.loads(decoded)
+        print(f"Parsed JSON result: {result}")
+        return result
     except Exception as e:
         logger.error(f"Decryption error: {str(e)}")
         logger.error(f"Encrypted hex length: {len(encrypted_hex)}")
+        logger.error(f"Encrypted hex: {encrypted_hex[:100]}...")  # 只打印前100个字符
         raise 

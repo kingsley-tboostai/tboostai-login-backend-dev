@@ -1,0 +1,68 @@
+# Python 相关
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 虚拟环境
+venv/
+env/
+.venv/
+env.bak/
+venv.bak/
+
+# FastAPI 特定
+*.log
+*.log.*
+logs/
+*.sqlite3
+*.db
+
+# 依赖管理
+Pipfile.lock
+requirements.txt.bak
+
+# 测试相关
+.pytest_cache/
+coverage/
+.coverage
+coverage.xml
+*.cover
+htmlcov/
+noxfile.py
+
+# IDE 和编辑器
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# 构建和打包
+build/
+dist/
+*.egg-info/
+*.egg
+MANIFEST
+
+# 环境变量
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.bak
+*.swp
+*~
+*.tmp
+
+# 文档生成
+docs/_build/

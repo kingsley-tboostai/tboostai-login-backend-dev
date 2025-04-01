@@ -68,6 +68,7 @@ def create_flow():
         scopes=[
             'https://www.googleapis.com/auth/userinfo.profile',
             'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/gmail.send',
             'openid'
         ],
         redirect_uri=f"{config.AUTH_BACKEND_URL}/auth/google/callback"
@@ -81,7 +82,7 @@ def create_jwt_token(data: dict) -> str:
 
     payload = {
         "user_id": user_id,
-        "exp": datetime.utcnow() + timedelta(days=30)
+        "exp": datetime.utcnow() + timedelta(days=7)
     }
     
     return jwt.encode(

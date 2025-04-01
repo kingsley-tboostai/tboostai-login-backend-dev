@@ -37,6 +37,7 @@ require_auth = auth.require_auth
 import os
 import logging
 logger = logging.getLogger(__name__)
+import traceback
 
 app = FastAPI(title="User Service API")
 app.add_middleware(
@@ -266,7 +267,17 @@ async def create_google_user(
     db: Session = Depends(get_session)
 ):
     try:
+        print(f"Received request with encrypted_data: {request.encrypted_data[:50]}...")  # 只打印前50个字符
         data = decrypt_data(request.encrypted_data)
+        print(f"Decrypted data type: {type(data)}")  # 添加类型检查
+        print(f"Decrypted data: {data}")  # 打印解密后的数据
+        
+        if not isinstance(data, dict):
+            raise ValueError(f"Decrypted data is not a dictionary: {type(data)}")
+            
+        if "email" not in data:
+            raise ValueError("Decrypted data does not contain email field")
+            
         # 先查询用户是否存在
         existing_user = await get_user_by_email(db, data["email"])
         if existing_user:
@@ -306,6 +317,8 @@ async def create_google_user(
             }
     except Exception as e:
         logger.error(f"Error in create_google_user: {str(e)}")
+        logger.error(f"Error type: {type(e)}")
+        logger.error(f"Error traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/user/google/update")
@@ -346,7 +359,17 @@ async def get_google_user(
     db: Session = Depends(get_session)
 ):
     try:
+        print(f"Received encrypted_data: {encrypted_data[:50]}...")  # 只打印前50个字符
         data = decrypt_data(encrypted_data)
+        print(f"Decrypted data type: {type(data)}")  # 添加类型检查
+        print(f"Decrypted data: {data}")  # 打印解密后的数据
+        
+        if not isinstance(data, dict):
+            raise ValueError(f"Decrypted data is not a dictionary: {type(data)}")
+            
+        if "email" not in data:
+            raise ValueError("Decrypted data does not contain email field")
+            
         user = await get_user_by_email(db, data["email"])
         if not user:
             return {"status": "not_found"}
@@ -374,6 +397,8 @@ async def get_google_user(
         }
     except Exception as e:
         logger.error(f"Error in get_google_user: {str(e)}")
+        logger.error(f"Error type: {type(e)}")
+        logger.error(f"Error traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

@@ -7,14 +7,29 @@ from fastapi import HTTPException
 import requests
 import sys
 from pathlib import Path
+import logging
+import traceback
 sys.path.append(str(Path(__file__).parent.parent))
 from config import config
 
-
+logger = logging.getLogger(__name__)
 
 DEFAULT_AVATAR_URL = ""
+
 async def get_user_by_email(db: Session, email: str) -> Optional[UserAccount]:
-    return db.exec(select(UserAccount).where(UserAccount.email == email)).first()
+    try:
+        logger.info(f"Attempting to get user by email: {email}")
+        result = db.exec(select(UserAccount).where(UserAccount.email == email)).first()
+        if result:
+            logger.info(f"Found user with email: {email}")
+        else:
+            logger.info(f"No user found with email: {email}")
+        return result
+    except Exception as e:
+        logger.error(f"Error in get_user_by_email: {str(e)}")
+        logger.error(f"Error type: {type(e)}")
+        logger.error(f"Error traceback: {traceback.format_exc()}")
+        raise
 
 async def get_user_by_id(db: Session, id: str) -> Optional[UserAccount]:
     return db.exec(select(UserAccount).where(UserAccount.id == id)).first()

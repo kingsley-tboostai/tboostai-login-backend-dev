@@ -50,6 +50,13 @@ DB_HOST = os.getenv("DB_HOST")
 DB_NAME = os.getenv("DB_NAME")
 DB_CHAT_NAME = os.getenv("DB_CHAT_NAME")
 
-# 数据库连接 URL
+print(f"DB_USERNAME: {DB_USERNAME}")
+print(f"DB_PASSWORD: {DB_PASSWORD}")
+print(f"DB_HOST: {DB_HOST}")
+print(f"DB_NAME: {DB_NAME}")
+print(f"DB_CHAT_NAME: {DB_CHAT_NAME}")
+
+# 修改数据库连接 URL，使用正确的 SSL 配置
+# config.py（相关部分）
 SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 SQLALCHEMY_CHAT_DATABASE_URL = f"mysql+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}/{DB_CHAT_NAME}"

@@ -13,8 +13,8 @@ class GmailService:
     def __init__(self, sender_email: str):
         self.sender_email = sender_email  # 指定发件人邮箱
         base_dir = Path(__file__).parent.parent 
-        self.secrets_path = base_dir / "config" / "secrets" / "client_secret_771384916731-rlvt5800trutb500j7dvphtp9pp5qa65.apps.googleusercontent.com.json"
-        self.token_path = base_dir / "config" / "secrets" / "token.pickle"
+        self.secrets_path = base_dir / "config" / "secrets" / "client_secret.json"
+        self.token_path = base_dir / "token.pickle"
         self.creds = self._get_credentials()
         self.service = build('gmail', 'v1', credentials=self.creds)
     
@@ -25,7 +25,6 @@ class GmailService:
             with open(self.token_path, 'rb') as token:
                 creds = pickle.load(token)
                 
-        # 如果没有凭据或已过期
         if not creds or not creds.valid:
             if False:
                 creds.refresh(Request())
@@ -34,9 +33,9 @@ class GmailService:
                     str(self.secrets_path),  # 使用实际文件名
                     ['https://www.googleapis.com/auth/gmail.send']
                 )
-                creds = flow.run_local_server(port=0)
+                creds = flow.run_local_server(port=8005)
             # 保存凭据
-            with open('token.pickle', 'wb') as token:
+            with open(self.token_path, 'wb') as token:
                 pickle.dump(creds, token)
         
         return creds
