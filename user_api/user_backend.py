@@ -61,7 +61,10 @@ GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 
 @app.on_event("startup")
 async def startup_event():
-    pass
+    print("=== Registered Routes ===")
+    for route in app.routes:
+        print(f"{route.methods} {route.path}")
+    print("========================")
 
 
 @app.post("/user/email/request-code")
@@ -230,6 +233,11 @@ async def complete_profile(
         
         print(f"[CompleteProfile] Updating user with full_name: {profile_data.full_name}")
         user.full_name = profile_data.full_name
+        if profile_data.phone_number:
+            user.phone_number = profile_data.phone_number
+        if profile_data.avatar_url:
+            user.avatar_url = profile_data.avatar_url
+            
         db.commit()
         db.refresh(user)
         print(f"[CompleteProfile] Updated user: {user}")

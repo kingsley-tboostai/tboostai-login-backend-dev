@@ -138,7 +138,20 @@ class EmailCodeVerificationRequest(BaseModel):
 class CompleteProfileRequest(BaseModel):
     email: str
     full_name: str
+    status: Optional[int] = None
+    updated_at: Optional[str] = None
+    last_login_at: Optional[str] = None
+    last_login_device: Optional[str] = None
+    is_phone_verified: Optional[bool] = None
+    two_factor_enabled: Optional[bool] = None
+    two_factor_method: Optional[str] = None
     phone_number: Optional[str] = None
+    id: Optional[str] = None
+    avatar_url: Optional[str] = None
+    created_at: Optional[str] = None
+    last_login_ip: Optional[str] = None
+    is_email_verified: Optional[bool] = None
+    deleted_at: Optional[str] = None
 
 class EmailUserCreateRequest(BaseModel):
     email: EmailStr
