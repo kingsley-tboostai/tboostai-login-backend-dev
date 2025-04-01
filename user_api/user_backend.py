@@ -127,6 +127,7 @@ async def verify_email_code(
         
         # 刷新 verification 对象，确保 expires_at 已经加载
         db.refresh(verification)
+        print(f"[EmailVerify] Created user: {user}")
         expires_at = getattr(verification, "expires_at", None)
         print(f"Type of expires_at: {type(expires_at)}; value: {expires_at}")
         
@@ -212,12 +213,14 @@ async def complete_profile(
     try:
         # 使用 scalars().first() 获取用户对象
         user = db.exec(select(UserAccount).where(UserAccount.id == user_id)).scalars().first()
+        print(f"[CompleteProfile] Query result for user_id {user_id}: {user}")
         if not user:
             raise HTTPException(404, "User not found")
         
         user.full_name = profile_data.full_name
         db.commit()
         db.refresh(user)
+        print(f"[CompleteProfile] Updated user: {user}")
         
         return {
             "status": "success",

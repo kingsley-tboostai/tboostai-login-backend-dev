@@ -310,6 +310,7 @@ async def verify_email_code(
         user_data = create_response.json()["data"]
         user_id = user_data["user"]["id"]
         
+        print(f"[Token] Generating token with user_id: {user_id}")
         # 3. 生成 JWT token
         token = create_jwt_token({"user_id": user_id})
 
