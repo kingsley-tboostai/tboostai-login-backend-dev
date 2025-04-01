@@ -127,7 +127,6 @@ async def verify_email_code(
         
         # 刷新 verification 对象，确保 expires_at 已经加载
         db.refresh(verification)
-        print(f"[EmailVerify] Created user: {user}")
         expires_at = getattr(verification, "expires_at", None)
         print(f"Type of expires_at: {type(expires_at)}; value: {expires_at}")
         
@@ -153,6 +152,8 @@ async def verify_email_code(
             user.is_email_verified = True
             db.commit()
             db.refresh(user)
+        
+        print(f"[EmailVerify] Created/Updated user: {user}")
         
         return {
             "status": "success", 
