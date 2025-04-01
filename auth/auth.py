@@ -47,12 +47,23 @@ app = FastAPI()
 @app.middleware("http")
 async def cors_middleware(request: Request, call_next):
     response = await call_next(request)
-    # 让 Nginx 处理 Vercel 域名的 CORS
-    if request.headers.get("origin") != "https://tboostai-login-frontend-dev.vercel.app":
-        response.headers["Access-Control-Allow-Origin"] = "*"
+    origin = request.headers.get("origin")
+    
+    # 如果是预检请求，直接返回
+    if request.method == "OPTIONS":
+        response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
         response.headers["Access-Control-Allow-Headers"] = "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
         response.headers["Access-Control-Expose-Headers"] = "Content-Length,Content-Range"
+        return response
+    
+    # 对于所有其他请求
+    if origin in config.ALLOWED_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
+        response.headers["Access-Control-Allow-Headers"] = "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+        response.headers["Access-Control-Expose-Headers"] = "Content-Length,Content-Range"
+    
     return response
 
 def create_flow():
