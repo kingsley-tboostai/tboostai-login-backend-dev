@@ -12,8 +12,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ALLOWED_ORIGINS = [
     "https://tboostai-login-frontend-dev.vercel.app",
     "http://localhost:3002",
-    "http://127.0.0.1:3002"
+    "http://127.0.0.1:3002",
+    "https://car-quest.tboostai.com"
 ]
+
+# 确保没有重复的域名
+ALLOWED_ORIGINS = list(set(ALLOWED_ORIGINS))  # 去重
+
 AUTH_BACKEND_URL = os.getenv("AUTH_BACKEND_URL", "http://localhost:8004")
 USER_BACKEND_URL = os.getenv("USER_BACKEND_URL", "http://localhost:8003")
 CHAT_BACKEND_URL = os.getenv("CHAT_BACKEND_URL", "http://localhost:8001")
