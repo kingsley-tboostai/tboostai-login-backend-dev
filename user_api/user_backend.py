@@ -220,9 +220,13 @@ async def complete_profile(
     db: Session = Depends(get_session)
 ):
     print("=== Complete Profile Endpoint ===")
-    print(f"Received request: {profile_data}")  # 添加日志
+    print(f"Request method: {request.method}")
+    print(f"Request URL: {request.url}")
+    print(f"Request headers: {dict(request.headers)}")
+    print(f"Authorization header: {request.headers.get('Authorization')}")
+    print(f"Received request body: {profile_data}")
     print(f"User ID from token: {user_id}")
-    print(f"Request headers: {request.headers}")  # 添加请求头日志
+    
     try:
         # 使用 scalars().first() 获取用户对象
         user = db.exec(select(UserAccount).where(UserAccount.id == user_id)).scalars().first()
